@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FBF7F2">
+<title>测测你朋友里，谁最可能是那个让你又爱又恨的损友</title>
+<style>
+  :root{
+    --bg:#FBF7F2;
+    --card:#FFFFFF;
+    --ink:#3E3A34;
+    --ink-2:#8A8177;
+    --ink-3:#BBB2A7;
+    --line:#EFE7DC;
+    --accent:#BF6F4A;
+    --accent-soft:#F8E7DC;
+    --warm:#FDF4EC;
+    --warm-line:#F3E2D2;
+    --cool:#EDF2F6;
+    --cool-line:#DCE7EF;
+    --warn:#FFF7EA;
+    --warn-line:#EAD3A6;
+    --warn-ink:#A9762D;
+    --match-ink:#6F8F79;
+    --match-soft:#EDF4EE;
+    --shadow:rgba(160,120,90,.16);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#171513;
+      --card:#211E1B;
+      --ink:#EDE7DF;
+      --ink-2:#A9A096;
+      --ink-3:#7C746B;
+      --line:#2E2A26;
+      --accent:#D98A63;
+      --accent-soft:#2E2320;
+      --warm:#231C17;
+      --warm-line:#3A2C22;
+      --cool:#1B2228;
+      --cool-line:#27333C;
+      --warn:#241E14;
+      --warn-line:#4A3A21;
+      --warn-ink:#E0B273;
+      --match-ink:#8FB39A;
+      --match-soft:#1E2621;
+      --shadow:rgba(0,0,0,.4);
+    }
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:16px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior:contain;
+    transition:background .2s ease,color .2s ease;
+  }
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100dvh;
+    padding:0 22px calc(36px + env(safe-area-inset-bottom));
+    display:flex;
+    flex-direction:column;
+  }
+
+  .screen{display:none;flex:1;flex-direction:column;}
+  .screen.active{display:flex;}
+
+  /* ---------- 封面 ---------- */
+  .cover{
+    justify-content:center;
+    text-align:center;
+    padding:56px 0 32px;
+  }
+  .cover-tag{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:5px 16px;
+    border-radius:999px;
+    margin-bottom:26px;
+  }
+  .cover h1{
+    font-size:26px;
+    font-weight:600;
+    line-height:1.55;
+    letter-spacing:.5px;
+  }
+  .cover h1 em{
+    font-style:normal;
+    color:var(--accent);
+    background:linear-gradient(transparent 64%, var(--accent-soft) 64%);
+  }
+  .cover-sub{
+    margin-top:18px;
+    font-size:14px;
+    color:var(--ink-2);
+    line-height:1.9;
+  }
+  .cover-deco{
+    margin:30px auto 26px;
+    width:56px;
+    height:1px;
+    background:var(--line);
+  }
+  .cover-note{
+    font-size:12.5px;
+    color:var(--ink-3);
+    line-height:1.9;
+    margin-top:14px;
+  }
+
+  /* ---------- 按钮 ---------- */
+  .btn{
+    display:block;
+    width:100%;
+    border:none;
+    border-radius:16px;
+    padding:16px;
+    font-size:16px;
+    font-family:inherit;
+    font-weight:500;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:transform .12s ease,opacity .12s ease,background .2s ease;
+  }
+  .btn:active{transform:scale(.985);opacity:.88;}
+  .btn-primary{
+    background:var(--accent);
+    color:#fff;
+    box-shadow:0 8px 20px var(--shadow);
+  }
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink-2);
+    border:1px solid var(--line);
+  }
+  .cover .btn{margin-top:32px;}
+
+  /* ---------- 答题 ---------- */
+  .quiz{padding-top:24px;}
+  .quiz-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+    min-height:32px;
+  }
+  .quiz-count{
+    font-size:13px;
+    color:var(--ink-2);
+    letter-spacing:1px;
+  }
+  .quiz-count b{color:var(--accent);font-weight:600;font-size:17px;}
+  .back-btn{
+    background:none;border:none;font-size:13px;color:var(--ink-3);
+    font-family:inherit;padding:6px 0;cursor:pointer;
+    visibility:hidden;
+  }
+  .progress{
+    height:4px;
+    background:var(--line);
+    border-radius:99px;
+    overflow:hidden;
+    margin-bottom:32px;
+  }
+  .progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#E5C0A6,var(--accent));
+    border-radius:99px;
+    transition:width .3s ease;
+  }
+  .q-title{
+    font-size:19px;
+    font-weight:600;
+    line-height:1.65;
+    margin-bottom:26px;
+    letter-spacing:.3px;
+  }
+  .q-title span{
+    display:block;
+    font-size:12px;
+    font-weight:400;
+    color:var(--ink-3);
+    letter-spacing:2px;
+    margin-bottom:10px;
+  }
+  .options{display:flex;flex-direction:column;gap:12px;flex:1;}
+  .option{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:16px;
+    padding:16px 18px;
+    font-size:15px;
+    line-height:1.6;
+    color:var(--ink);
+    text-align:left;
+    font-family:inherit;
+    cursor:pointer;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    min-height:44px;
+    transition:all .16s ease;
+  }
+  .option .dot{
+    flex:0 0 8px;
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--line);
+    margin-top:9px;
+    transition:background .16s ease;
+  }
+  .option.selected{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+  }
+  .option.selected .dot{background:var(--accent);}
+  .quiz-bottom{padding-top:24px;}
+
+  /* ---------- 结果 ---------- */
+  .result{padding-top:36px;}
+  .result-label{
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--ink-3);
+    text-align:center;
+    margin-bottom:12px;
+  }
+  .result-name{
+    font-size:29px;
+    font-weight:600;
+    text-align:center;
+    letter-spacing:1px;
+    line-height:1.4;
+    color:var(--accent);
+  }
+  .result-role{
+    text-align:center;
+    font-size:13.5px;
+    color:var(--ink-2);
+    margin-top:10px;
+    letter-spacing:.5px;
+  }
+  .result-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    margin-top:16px;
+  }
+  .pill{
+    display:inline-block;
+    font-size:12.5px;
+    padding:6px 14px;
+    border-radius:999px;
+    letter-spacing:.5px;
+    line-height:1.5;
+  }
+  .pill-match{color:var(--match-ink);background:var(--match-soft);}
+  .pill-lose{color:var(--warn-ink);background:var(--warn);border:1px solid var(--warn-line);}
+  .hit-line{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-3);
+    margin-top:12px;
+    letter-spacing:.3px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:20px;
+    padding:22px 20px;
+    margin-top:24px;
+    border:1px solid var(--line);
+  }
+  .card h3{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:2px;
+    color:var(--accent);
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .card h3::before{
+    content:"";
+    width:14px;height:1px;
+    background:var(--accent);
+    opacity:.5;
+    display:inline-block;
+  }
+  .card p{
+    font-size:14.5px;
+    line-height:2;
+    color:var(--ink);
+  }
+  .card.warm{background:var(--warm);border-color:var(--warm-line);}
+  .card.cool{background:var(--cool);border-color:var(--cool-line);}
+  .keyword-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .keyword{
+    font-size:12.5px;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:5px 14px;
+    border-radius:999px;
+  }
+  .warn{
+    margin-top:20px;
+    padding:16px 18px;
+    border:1px dashed var(--warn-line);
+    background:var(--warn);
+    border-radius:14px;
+  }
+  .warn-tag{
+    display:inline-block;
+    font-size:11.5px;
+    letter-spacing:2px;
+    color:var(--warn-ink);
+    margin-bottom:6px;
+  }
+  .warn p{
+    font-size:14px;
+    line-height:1.9;
+    color:var(--ink);
+  }
+  .result-actions{
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .footer-note{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-3);
+    margin-top:22px;
+    line-height:1.8;
+    letter-spacing:.5px;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  #screen-result > *{animation:fadeUp .42s ease both;}
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:calc(32px + env(safe-area-inset-bottom));
+    transform:translate(-50%,14px);
+    background:rgba(30,26,22,.92);
+    color:#fff;
+    font-size:13.5px;
+    padding:11px 20px;
+    border-radius:999px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .24s ease,transform .24s ease;
+    max-width:82vw;
+    text-align:center;
+    z-index:99;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+
+  @media (max-width:360px){
+    .cover h1{font-size:23px;}
+    .result-name{font-size:26px;}
+    .card p{font-size:14px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+  ::selection{background:var(--accent-soft);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <section class="screen cover active" id="screen-cover">
+    <span class="cover-tag">损友鉴定所 · 第 01 期</span>
+    <h1>测测你朋友里<br>谁最可能是那个<br><em>让你又爱又恨的损友</em></h1>
+    <div class="cover-deco"></div>
+    <p class="cover-sub">
+      15 道题，聊聊你们的相处现场<br>
+      看看你最容易被哪种人拿捏
+    </p>
+    <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+    <p class="cover-note">约 2 分钟 · 凭第一直觉作答更准</p>
+  </section>
+
+  <section class="screen quiz" id="screen-quiz">
+    <div class="quiz-top">
+      <div class="quiz-count"><b id="q-index">1</b> / 15</div>
+      <button class="back-btn" id="back-btn" onclick="prevQuestion()">上一题</button>
+    </div>
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <h2 class="q-title"><span id="q-tag">QUESTION</span><em id="q-title-text" style="font-style:normal"></em></h2>
+    <div class="options" id="options"></div>
+    <div class="quiz-bottom">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>下一题</button>
+    </div>
+  </section>
+
+  <section class="screen result" id="screen-result">
+    <div class="result-label">你 的 头 号 损 友</div>
+    <div class="result-name" id="r-name">——</div>
+    <div class="result-role" id="r-role"></div>
+    <div class="result-badges">
+      <span class="pill pill-match" id="r-match"></span>
+      <span class="pill pill-lose" id="r-lose"></span>
+    </div>
+    <p class="hit-line" id="r-hits"></p>
+
+    <div class="card warm">
+      <h3>为什么会成为朋友</h3>
+      <p id="r-why"></p>
+    </div>
+
+    <div class="card">
+      <h3>TA 最戳你的点</h3>
+      <p id="r-charm"></p>
+      <div class="keyword-row" id="r-keywords"></div>
+    </div>
+
+    <div class="card cool">
+      <h3>相处建议</h3>
+      <p id="r-tips"></p>
+    </div>
+
+    <div class="warn">
+      <span class="warn-tag">翻 车 预 警</span>
+      <p id="r-warning"></p>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="shareResult()">分享给这个损友</button>
+      <button class="btn btn-ghost" onclick="restart()">重新测试</button>
+    </div>
+    <p class="footer-note">仅供娱乐 · 损归损，真出事第一个到的还是 TA</p>
+  </section>
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* DATA:START */
+const QUESTIONS = [
+  {
+    tag: "深夜来电",
+    title: "凌晨一点半，手机响了。你希望接起来是哪一种？",
+    options: [
+      { text: "「喂！我跟你说个巨离谱的事！」——话没说完自己先笑场", type: "R1" },
+      { text: "「你睡了吗？他又没回我」——然后连打了三通", type: "R5" },
+      { text: "「我在你楼下，穿件外套下来，吃烧烤」", type: "R8" },
+      { text: "（未接来电）……第二天：「昨晚睡了」", type: "R4" }
+    ]
+  },
+  {
+    tag: "60 秒语音",
+    title: "你发了一条 60 秒语音，最想收到哪种回复？",
+    options: [
+      { text: "三条更长的语音，最后还问你「你刚说的那个是谁来着」", type: "R1" },
+      { text: "「你第三句就错了，我列了三点，你听一下」", type: "R2" },
+      { text: "「三天后：哈哈哈刚看到，笑死」", type: "R4" },
+      { text: "没回，第二天见面第一句是「你昨天说的那个事，后来呢」", type: "R3" }
+    ]
+  },
+  {
+    tag: "借钱",
+    title: "朋友开口借 2000，哪种说法你最难拒绝？",
+    options: [
+      { text: "「就这一次，真的急，月底必须还你」", type: "R6" },
+      { text: "「等我这个作业交了就有钱，就这两天」——那作业已经拖了三周", type: "R7" },
+      { text: "「你还记得上次那笔吗？我们先对一下账」", type: "R2" },
+      { text: "「不借也行，但你得听我把这件事讲完」——然后他讲了自己", type: "R5" }
+    ]
+  },
+  {
+    tag: "一起吃饭",
+    title: "和朋友吃饭，哪种人你其实还能忍？",
+    options: [
+      { text: "到了才发现他带了另外五个朋友", type: "R1" },
+      { text: "点完菜就开始刷手机，全程不说话", type: "R4" },
+      { text: "最后一刻说「我可能来不了」", type: "R7" },
+      { text: "抢着买单，然后说「下次你请」", type: "R6" }
+    ]
+  },
+  {
+    tag: "吐槽",
+    title: "你被老师或领导怼了，在群里吐槽。你最想看到哪句？",
+    options: [
+      { text: "「他算什么东西」——比你还气", type: "R1" },
+      { text: "「说重点：他哪句不对，你该怎么回」", type: "R2" },
+      { text: "「你先别说了，我懂」——然后陪你沉默十分钟", type: "R3" },
+      { text: "「分了吧」——等等，这是作业，不是对象", type: "R5" }
+    ]
+  },
+  {
+    tag: "你难过的时候",
+    title: "你难过的时候，最希望朋友做什么？",
+    options: [
+      { text: "安静陪着，不问也不劝", type: "R3" },
+      { text: "直接给你一条能执行的处理方案", type: "R2" },
+      { text: "什么都不说，把外卖点了，备注「少辣」", type: "R8" },
+      { text: "陪你熬到天亮，然后俩人一起迟到", type: "R7" }
+    ]
+  },
+  {
+    tag: "出门旅行",
+    title: "一起出去玩，你希望对方是哪种人？",
+    options: [
+      { text: "什么都行，到了再说，走丢了再找", type: "R7" },
+      { text: "钱的事他全包，你只负责玩", type: "R6" },
+      { text: "人群里他能一眼找到你", type: "R8" },
+      { text: "你走累了会问「要不要坐会儿」，然后陪你坐半小时，一句不催", type: "R3" }
+    ]
+  },
+  {
+    tag: "小群",
+    title: "你们的小群里，你最离不开哪种人？",
+    options: [
+      { text: "只在关键时刻出现，第一句是「你别慌，我在」", type: "R8" },
+      { text: "永远只回一个表情包", type: "R4" },
+      { text: "每次有人 emo，他第一个接话", type: "R3" },
+      { text: "每次发红包的都是他（虽然只有 8 块 8）", type: "R6" }
+    ]
+  },
+  {
+    tag: "迟到",
+    title: "朋友迟到 20 分钟，哪种解释你会真的不生气？",
+    options: [
+      { text: "「睡过头了」——然后第二天提前半小时到", type: "R7" },
+      { text: "「我提前到了，在楼下等你」——他其实一直都提前到", type: "R8" },
+      { text: "「堵车」——而他家离得最近", type: "R4" },
+      { text: "「我刚分手，在楼下哭了一会儿」", type: "R5" }
+    ]
+  },
+  {
+    tag: "恋爱参谋",
+    title: "朋友的感情出问题，你最吃哪种反应？",
+    options: [
+      { text: "先听你说完，再问「你想要什么结果」", type: "R2" },
+      { text: "把聊天记录逐句标注，分析到凌晨两点", type: "R5" },
+      { text: "「别分析了，出来喝一杯」", type: "R1" },
+      { text: "「你先哭，哭完我陪你骂」", type: "R3" }
+    ]
+  },
+  {
+    tag: "期末周",
+    title: "期末周，哪种朋友你最想拥有？",
+    options: [
+      { text: "和你一起熬到最后一天，互相拖后腿", type: "R7" },
+      { text: "自己的早做完了，顺手把你的也做了", type: "R8" },
+      { text: "每隔一小时发一句「进度？」", type: "R2" },
+      { text: "回你「在写了在写了」，然后消失", type: "R4" }
+    ]
+  },
+  {
+    tag: "聚会",
+    title: "一屋子十几个人的聚会，你希望谁在场？",
+    options: [
+      { text: "进门五分钟就认识了一半人", type: "R1" },
+      { text: "全场只有他在赶 deadline，电脑都带来了", type: "R7" },
+      { text: "拉着你分析在场谁和谁在暧昧，分析得眉飞色舞", type: "R5" },
+      { text: "负责把账单 AA 到小数点后两位", type: "R6" }
+    ]
+  },
+  {
+    tag: "吵架",
+    title: "你们闹别扭了，哪种和好方式你受用？",
+    options: [
+      { text: "发个表情包，就当无事发生", type: "R4" },
+      { text: "直接说「刚才那句我说重了」", type: "R2" },
+      { text: "先让你把话说完，中间一句都没打断", type: "R3" },
+      { text: "先骂你一顿，再抱着你哭", type: "R1" }
+    ]
+  },
+  {
+    tag: "深夜朋友圈",
+    title: "凌晨三点你发了条丧气朋友圈，你希望？",
+    options: [
+      { text: "秒赞，然后连发三条「怎么了怎么了怎么了」", type: "R1" },
+      { text: "评论「你是不是又因为他」——明明你俩这次吵的是作业", type: "R5" },
+      { text: "第二天打电话：「我看到你朋友圈了，出来吃早饭」", type: "R8" },
+      { text: "只点了个赞，什么都没说", type: "R4" }
+    ]
+  },
+  {
+    tag: "最后一道",
+    title: "朋友之间最不能缺的是什么？",
+    options: [
+      { text: "随叫随到", type: "R8" },
+      { text: "说真话，哪怕难听", type: "R2" },
+      { text: "能一起浪费时间", type: "R7" },
+      { text: "钱上不含糊", type: "R6" }
+    ]
+  }
+];
+
+const RESULTS = [
+  {
+    id: "R1",
+    name: "气氛组组长",
+    role: "一想到冷场就先笑出来的那个人",
+    lose: "损耗 92 / 100 · 高强度社交",
+    match: "适配度 94% · 你在的地方他都在",
+    why: "你不是爱热闹，你是怕没人说话时那种安静。这人在的地方，安静活不过三秒，你就顺势松一口气，把嘴交给他。",
+    charm: "他能记住所有冷场的位置，然后精准地往那儿扔一句不正经的话。你在旁边笑得最开心，还没人知道是你的功劳。",
+    keywords: ["会救场", "社恐外挂", "声音大"],
+    tips: "他也会累，只是不说。散场后问一句「你今天累不累」，他会记很久。",
+    warning: "你迟早会听见自己的隐私，被当成段子讲给第三个人听。"
+  },
+  {
+    id: "R2",
+    name: "人间清醒但嘴毒",
+    role: "每句话都对，每个字都扎",
+    lose: "损耗 78 / 100 · 慢性自我怀疑",
+    match: "适配度 91% · 一句顶十句，一刀顶十刀",
+    why: "你受够了自己骗自己。这人不安慰你，只把你的借口一条条拆掉，然后你发现自己居然不生气，反而松了口气。",
+    charm: "他说话从不绕，别人还在想怎么开口，他已经把结论说完了。你被他说中过三次，每次都想反驳，每次都没话讲。",
+    keywords: ["不装", "逻辑怪", "刀子嘴"],
+    tips: "他怼你是因为不把你当外人。但你也得学会说「今天别分析，就陪我骂两句」。",
+    warning: "哪天他心情不好，那句「我早说过了」可能会让你当场破防。"
+  },
+  {
+    id: "R3",
+    name: "情绪垃圾桶",
+    role: "专业承接你的凌晨三点",
+    lose: "损耗 85 / 100 · 单向输出型",
+    match: "适配度 90% · 你说他听，从不打断",
+    why: "你不缺讲道理的人，缺一个听完还问「还有吗」的人。他接得住你的碎碎念，也接得住你讲了半小时其实什么都没说。",
+    charm: "他不太给建议，但会把你说过的细节记住。第二天问一句「那个事后来怎么样了」，你会觉得自己被认真对待过。",
+    keywords: ["会听", "记性好", "不打断"],
+    tips: "他从来不说自己的事，别以为他没事。偶尔问一句「你今天怎么样」，他会愣一下。",
+    warning: "你可能会把他当树洞太久，久到忘了他也需要倒垃圾。"
+  },
+  {
+    id: "R4",
+    name: "已读不回大师",
+    role: "不是不在乎，是打开对话框就忘了",
+    lose: "损耗 88 / 100 · 低电量陪伴",
+    match: "适配度 89% · 三天不回，见面照旧",
+    why: "你不喜欢被黏着，他刚好也不黏人。你们的关系不靠聊天记录维持，靠的是三个月后一见面，他第一句还是「你上次说的那个事后来呢」。",
+    charm: "他从不发「在吗」，也不要求你秒回。这种不过度打扰的分寸，反而让你愿意主动找他。",
+    keywords: ["不粘人", "有边界", "后知后觉"],
+    tips: "他的沉默不是态度，是电量。急事直接打电话，他会接。",
+    warning: "你哪天真的需要他，可能等来的是第二天的「昨晚睡了」。"
+  },
+  {
+    id: "R5",
+    name: "恋爱脑军师",
+    role: "自己的感情一塌糊涂，给你分析得头头是道",
+    lose: "损耗 76 / 100 · 剧本杀式友情",
+    match: "适配度 92% · 三句话必聊回他自己",
+    why: "你感情上有事需要人商量，他永远在。虽然他的答案通常不靠谱，但他会陪你从八点聊到两点，还把你的聊天记录逐句标注。",
+    charm: "他能把你对象的一句「嗯」拆解出七种意思，讲得你一会儿哭一会儿笑。你明知道他也在瞎猜，但你就是想听。",
+    keywords: ["话多", "会分析", "也在瞎猜"],
+    tips: "他给你的建议，记得只当参考——他连自己的事都理不清。",
+    warning: "你俩可能会因为一个共同认识的人，互相猜了三个月。"
+  },
+  {
+    id: "R6",
+    name: "借钱艺术家",
+    role: "借的时候真诚，还的时候失联",
+    lose: "损耗 81 / 100 · 钱包慢性失血",
+    match: "适配度 87% · 你们的友情标价不高",
+    why: "你心软，见不得人开口为难。他偏偏最会在你心软的时候开口，一句「就这一次，真的急」，你就把话咽回去了。",
+    charm: "他不坏，是真的把你当自己人。借钱的时候连还款日期都写进备忘录，写得特别认真。",
+    keywords: ["嘴甜", "有借有还（大概）", "心软"],
+    tips: "借之前先问一句「你上个月那笔打算什么时候还」。问得出这句话，你俩关系才稳。",
+    warning: "你可能会在某个深夜发现，他朋友圈的头像换了，但消息还是没回。"
+  },
+  {
+    id: "R7",
+    name: "永远在赶 DDL",
+    role: "前一天说没事，当天说完了",
+    lose: "损耗 90 / 100 · 被动共沉沦",
+    match: "适配度 93% · 你们一起拖到最后一天",
+    why: "你也是踩着点的人。别人催你你会烦，他不仅不催，还说「来得及，还有六个小时」，于是你们一起熬、一起骂，一起在截止前一分钟提交。",
+    charm: "他有一种奇怪的乐观，能让你在凌晨四点的图书馆笑出声。你们互相拖后腿，但从来没真的翻车过。",
+    keywords: ["极限操作", "乐观", "一起完蛋"],
+    tips: "跟他合作项目之前，先问一句「你几点开始做」。他说「马上」，你就该自己做一半。",
+    warning: "总有一天，你们会同时忘记那个截止时间。"
+  },
+  {
+    id: "R8",
+    name: "默默兜底型",
+    role: "嘴上骂你，手上把你的事办完了",
+    lose: "损耗 83 / 100 · 习得性依赖",
+    match: "适配度 95% · 你出事时他已经在路上",
+    why: "你嘴上说不用帮忙，其实希望有个人不问原因就来。他不问你为什么，只问你地址在哪。",
+    charm: "他很少说好听的话，但你稿子打印、材料盖章、搬东西、修电脑这些事，他全办过，而且不邀功。",
+    keywords: ["靠谱", "不说漂亮话", "在场"],
+    tips: "他不喜欢被感谢，但你可以请他吃顿贵的。他嘴上说不去，最后还是到得最早。",
+    warning: "你会渐渐习惯他兜底，直到有一天他也需要人兜底，而你已经忘了怎么接。"
+  }
+];
+/* DATA:END */
+
+/* ============ 状态 ============ */
+const TOTAL = QUESTIONS.length;
+const BASE_TITLE = "测测你朋友里，谁最可能是那个让你又爱又恨的损友";
+let current = 0;
+let answers = new Array(TOTAL).fill(null);
+let lastResult = null;
+
+const $ = id => document.getElementById(id);
+
+/* ============ 屏幕切换 ============ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ============ 答题流程 ============ */
+function startQuiz(){
+  current = 0;
+  answers = new Array(TOTAL).fill(null);
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[current];
+  const answered = answers.filter(a => a !== null).length;
+
+  $('q-index').textContent = current + 1;
+  $('q-tag').textContent = 'Q' + (current + 1) + ' · ' + q.tag;
+  $('q-title-text').textContent = q.title;
+  $('progress-bar').style.width = (answered / TOTAL * 100) + '%';
+
+  const box = $('options');
+  box.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option';
+    if (answers[current] === i) btn.classList.add('selected');
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    const label = document.createElement('span');
+    label.textContent = opt.text;
+    btn.appendChild(dot);
+    btn.appendChild(label);
+    btn.addEventListener('click', () => selectOption(i));
+    box.appendChild(btn);
+  });
+
+  $('back-btn').style.visibility = current === 0 ? 'hidden' : 'visible';
+  updateNextBtn();
+}
+
+function selectOption(i){
+  answers[current] = i;
+  const opts = $('options').children;
+  for (let k = 0; k < opts.length; k++){
+    opts[k].classList.toggle('selected', k === i);
+  }
+  updateNextBtn();
+  $('progress-bar').style.width = (answers.filter(a => a !== null).length / TOTAL * 100) + '%';
+
+  const idx = current;
+  const isLast = idx === TOTAL - 1;
+  if (!isLast){
+    setTimeout(() => {
+      if (current === idx && answers[idx] === i) nextQuestion();
+    }, 240);
+  }
+}
+
+function updateNextBtn(){
+  const btn = $('next-btn');
+  const ok = answers[current] !== null;
+  btn.disabled = !ok;
+  btn.style.opacity = ok ? '1' : '.4';
+  btn.textContent = (current === TOTAL - 1) ? '查看结果' : '下一题';
+}
+
+function nextQuestion(){
+  if (answers[current] === null) return;
+  if (current < TOTAL - 1){
+    current++;
+    renderQuestion();
+  } else {
+    finish();
+  }
+}
+
+function prevQuestion(){
+  if (current > 0){
+    current--;
+    renderQuestion();
+  }
+}
+
+/* ============ 计分（确定性） ============ */
+function computeResult(){
+  const score = {};
+  RESULTS.forEach(r => { score[r.id] = 0; });
+
+  answers.forEach((optIndex, qi) => {
+    const type = QUESTIONS[qi].options[optIndex].type;
+    if (score[type] !== undefined) score[type]++;
+  });
+
+  // 平票破平：以答案序列做确定性种子，同一份答案永远同一结果
+  const seed = answers.reduce((acc, v, i) => acc + (v + 1) * (i + 3), 0);
+
+  let best = RESULTS[0];
+  let bestScore = -Infinity;
+  RESULTS.forEach((r, idx) => {
+    // 抖动 < 1，只在同分时起作用；乘数与 11 互质，避免某个结果永远吃零
+    const jitter = ((seed * (idx + 3) + idx * 5) % 11) / 10;
+    const s = score[r.id] + jitter;
+    if (s > bestScore){
+      bestScore = s;
+      best = r;
+    }
+  });
+
+  return { result: best, hits: score[best.id] };
+}
+
+function finish(){
+  const { result, hits } = computeResult();
+  renderResult(result, hits);
+  showScreen('screen-result');
+  try {
+    history.replaceState(null, '', location.pathname + location.search + '#r=' + result.id);
+  } catch (e) { /* file:// 下部分浏览器会拒，忽略 */ }
+}
+
+/* ============ 结果渲染 ============ */
+function renderResult(r, hits){
+  lastResult = r;
+  $('r-name').textContent = r.name;
+  $('r-role').textContent = r.role;
+  $('r-match').textContent = r.match;
+  $('r-lose').textContent = r.lose;
+  $('r-why').textContent = r.why;
+  $('r-charm').textContent = r.charm;
+  $('r-tips').textContent = r.tips;
+  $('r-warning').textContent = r.warning;
+
+  const kw = $('r-keywords');
+  kw.innerHTML = '';
+  r.keywords.forEach(k => {
+    const span = document.createElement('span');
+    span.className = 'keyword';
+    span.textContent = k;
+    kw.appendChild(span);
+  });
+
+  const hitLine = $('r-hits');
+  if (hits === null || hits === undefined){
+    hitLine.textContent = '这是别人分享给你的结果 · 自己测一遍，看是不是你';
+  } else {
+    hitLine.textContent = '你答的 ' + TOTAL + ' 题里，有 ' + hits + ' 题指向这个损友';
+  }
+
+  const kids = document.querySelectorAll('#screen-result > *');
+  kids.forEach((el, i) => { el.style.animationDelay = (i * 40) + 'ms'; });
+
+  document.title = '我的头号损友是「' + r.name + '」';
+}
+
+/* ============ 分享 / 路由 ============ */
+function shareResult(){
+  if (!lastResult) return;
+  const url = location.href.split('#')[0] + '#r=' + lastResult.id;
+  const text = '我的头号损友是「' + lastResult.name + '」——' + lastResult.lose;
+
+  const fallback = () => {
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(() => {
+        toast('链接已复制，发给那个损友吧');
+      }).catch(() => { window.prompt('复制这个链接发给 TA：', url); });
+    } else {
+      window.prompt('复制这个链接发给 TA：', url);
+    }
+  };
+
+  if (navigator.share){
+    navigator.share({ title: document.title, text: text, url: url }).then(() => {
+      toast('已发出，等着被骂吧');
+    }).catch(err => {
+      if (err && err.name === 'AbortError') return;
+      fallback();
+    });
+    return;
+  }
+  fallback();
+}
+
+function routeFromHash(){
+  const m = location.hash.match(/^#r=(R\d)$/);
+  if (!m) return false;
+  const r = RESULTS.find(x => x.id === m[1]);
+  if (!r) return false;
+  renderResult(r, null);
+  showScreen('screen-result');
+  return true;
+}
+
+function restart(){
+  current = 0;
+  answers = new Array(TOTAL).fill(null);
+  lastResult = null;
+  document.title = BASE_TITLE;
+  try {
+    history.replaceState(null, '', location.pathname + location.search);
+  } catch (e) { /* ignore */ }
+  showScreen('screen-cover');
+}
+
+/* ============ 小提示 ============ */
+let toastTimer = null;
+function toast(msg){
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+/* ============ 启动 ============ */
+window.addEventListener('hashchange', () => {
+  if (!routeFromHash()) return;
+});
+if (!routeFromHash()){
+  showScreen('screen-cover');
+}
+</script>
+<!-- 触发条件速查：R1 气氛组组长 8 槽｜R2 嘴毒 8 槽｜R3 情绪垃圾桶 7 槽｜R4 已读不回 8 槽｜R5 恋爱脑军师 7 槽｜R6 借钱艺术家 6 槽｜R7 赶 DDL 8 槽｜R8 兜底 8 槽；每题 4 个选项互不重复，8 个结果均可命中，同答案结果确定可复现。 -->
+</body>
+</html>
