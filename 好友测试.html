@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>测测《后会友期》里你的好朋友最有可能是谁？</title>
+<style>
+  :root{
+    --bg:#FBF9F6;
+    --card:#FFFFFF;
+    --ink:#4A4640;
+    --ink-light:#8F8880;
+    --line:#EDE7DF;
+    --accent:#B8A99A;
+    --accent-soft:#F1EAE2;
+    --mint:#C7D6CB;
+    --mint-soft:#EDF3EE;
+    --blue-soft:#E9EFF4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+    font-size:16px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    padding:0 22px 40px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .screen{display:none;flex:1;flex-direction:column;}
+  .screen.active{display:flex;}
+
+  .cover{
+    justify-content:center;
+    text-align:center;
+    padding:60px 0 40px;
+  }
+  .cover-tag{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:5px 16px;
+    border-radius:999px;
+    margin-bottom:28px;
+  }
+  .cover h1{
+    font-size:26px;
+    font-weight:600;
+    line-height:1.55;
+    letter-spacing:.5px;
+  }
+  .cover h1 em{
+    font-style:normal;
+    color:#A08E7B;
+    background:linear-gradient(transparent 62%, #F2E6D8 62%);
+  }
+  .cover-sub{
+    margin-top:18px;
+    font-size:14px;
+    color:var(--ink-light);
+    line-height:1.9;
+  }
+  .cover-deco{
+    margin:34px auto 30px;
+    width:60px;
+    height:1px;
+    background:var(--line);
+  }
+  .cover-note{
+    font-size:12.5px;
+    color:#B3ABA2;
+    line-height:1.9;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    border:none;
+    border-radius:16px;
+    padding:16px;
+    font-size:16px;
+    font-family:inherit;
+    font-weight:500;
+    letter-spacing:1px;
+    cursor:pointer;
+    transition:transform .12s ease,opacity .12s ease;
+  }
+  .btn:active{transform:scale(.985);opacity:.88;}
+  .btn-primary{
+    background:#B6A695;
+    color:#fff;
+    box-shadow:0 6px 18px rgba(182,166,149,.28);
+  }
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink-light);
+    border:1px solid var(--line);
+  }
+  .cover .btn{margin-top:36px;}
+
+  .quiz{padding-top:26px;}
+  .quiz-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .quiz-count{
+    font-size:13px;
+    color:var(--ink-light);
+    letter-spacing:1px;
+  }
+  .quiz-count b{color:#A08E7B;font-weight:600;font-size:17px;}
+  .back-btn{
+    background:none;border:none;font-size:13px;color:#C0B8AF;
+    font-family:inherit;padding:6px 0;cursor:pointer;
+  }
+  .progress{
+    height:4px;
+    background:var(--line);
+    border-radius:99px;
+    overflow:hidden;
+    margin-bottom:34px;
+  }
+  .progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#D9CBBB,#B8A99A);
+    border-radius:99px;
+    transition:width .3s ease;
+  }
+  .q-title{
+    font-size:19px;
+    font-weight:600;
+    line-height:1.65;
+    margin-bottom:28px;
+    letter-spacing:.3px;
+  }
+  .q-title span{
+    display:block;
+    font-size:12px;
+    font-weight:400;
+    color:#C0B8AF;
+    letter-spacing:2px;
+    margin-bottom:10px;
+  }
+  .options{display:flex;flex-direction:column;gap:12px;flex:1;}
+  .option{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:16px;
+    padding:16px 18px;
+    font-size:15px;
+    line-height:1.6;
+    color:var(--ink);
+    text-align:left;
+    font-family:inherit;
+    cursor:pointer;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    transition:all .16s ease;
+  }
+  .option .dot{
+    flex:0 0 8px;
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--line);
+    margin-top:9px;
+    transition:background .16s ease;
+  }
+  .option.selected{
+    background:var(--mint-soft);
+    border-color:var(--mint);
+  }
+  .option.selected .dot{background:#8FAF9B;}
+  .quiz-bottom{padding-top:26px;}
+
+  .result{padding-top:40px;}
+  .result-label{
+    font-size:12px;
+    letter-spacing:3px;
+    color:#C0B8AF;
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .result-name{
+    font-size:30px;
+    font-weight:600;
+    text-align:center;
+    letter-spacing:1px;
+    line-height:1.4;
+    color:#8C7A67;
+  }
+  .result-role{
+    text-align:center;
+    font-size:13.5px;
+    color:var(--ink-light);
+    margin-top:10px;
+    letter-spacing:1px;
+  }
+  .result-match{
+    text-align:center;
+    margin-top:18px;
+  }
+  .match-pill{
+    display:inline-block;
+    font-size:12.5px;
+    color:#8FAF9B;
+    background:var(--mint-soft);
+    padding:6px 18px;
+    border-radius:999px;
+    letter-spacing:1px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:20px;
+    padding:24px 22px;
+    margin-top:26px;
+    border:1px solid #F3EEE8;
+  }
+  .card h3{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:2px;
+    color:#A08E7B;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .card h3::before{
+    content:"";
+    width:14px;height:1px;
+    background:#D9CBBB;
+    display:inline-block;
+  }
+  .card p{
+    font-size:14.5px;
+    line-height:2;
+    color:#5C574F;
+  }
+  .card p + p{margin-top:10px;}
+  .card.warm{background:#FDF7F1;border-color:#F5EADF;}
+  .card.cool{background:var(--blue-soft);border-color:#DFE8F0;}
+  .keyword-row{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;
+  }
+  .keyword{
+    font-size:12.5px;
+    color:#8C7A67;
+    background:var(--accent-soft);
+    padding:5px 14px;
+    border-radius:999px;
+  }
+  .result-actions{
+    margin-top:34px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .footer-note{
+    text-align:center;
+    font-size:11.5px;
+    color:#CBC4BB;
+    margin-top:26px;
+    line-height:1.8;
+    letter-spacing:.5px;
+  }
+
+  .result > *{animation:fadeUp .42s ease both;}
+  .result > *:nth-child(2){animation-delay:.05s;}
+  .result > *:nth-child(3){animation-delay:.09s;}
+  .result > *:nth-child(4){animation-delay:.13s;}
+  .result > *:nth-child(5){animation-delay:.17s;}
+  .result > *:nth-child(6){animation-delay:.21s;}
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <section class="screen cover active" id="screen-cover">
+    <span class="cover-tag">后会友期 · 好友匹配</span>
+    <h1>测测《后会友期》里<br>你的好朋友<em>最有可能是谁</em>？</h1>
+    <div class="cover-deco"></div>
+    <p class="cover-sub">
+      15 道小题，聊聊你的社交电量、相处习惯和小脾气<br>
+      看看节目里，谁最接得住真实的你
+    </p>
+    <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+    <p class="cover-note">约 2 分钟 · 凭第一直觉作答更准哦</p>
+  </section>
+
+  <section class="screen quiz" id="screen-quiz">
+    <div class="quiz-top">
+      <div class="quiz-count"><b id="q-index">1</b> / 15</div>
+      <button class="back-btn" id="back-btn" onclick="prevQuestion()">上一题</button>
+    </div>
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <h2 class="q-title"><span id="q-tag">QUESTION</span><em id="q-title-text" style="font-style:normal"></em></h2>
+    <div class="options" id="options"></div>
+    <div class="quiz-bottom">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled style="opacity:.4">下一题</button>
+    </div>
+  </section>
+
+  <section class="screen result" id="screen-result">
+    <div class="result-label">你 在 节 目 里 的 最 佳 好 友</div>
+    <div class="result-name" id="r-name">——</div>
+    <div class="result-role" id="r-role"></div>
+    <div class="result-match"><span class="match-pill" id="r-match"></span></div>
+
+    <div class="card warm">
+      <h3>你为什么会和 TA 成为好朋友</h3>
+      <p id="r-why"></p>
+    </div>
+
+    <div class="card">
+      <h3>TA 最戳你的那个点</h3>
+      <p id="r-charm"></p>
+      <div class="keyword-row" id="r-keywords"></div>
+    </div>
+
+    <div class="card cool">
+      <h3>相处小提醒</h3>
+      <p id="r-tips"></p>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary" onclick="restart()">重新测试</button>
+      <button class="btn btn-ghost" onclick="shareTip()">截图保存分享</button>
+    </div>
+    <p class="footer-note">仅供娱乐 · 真实的好友关系永远由你们自己定义</p>
+  </section>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    tag: "社交电量",
+    title: "周五晚上下班，你更想怎么过？",
+    options: [
+      { text: "约三五好友吃顿热闹的火锅", type: "E" },
+      { text: "一个人窝在家点外卖追剧", type: "I" },
+      { text: "找最好的朋友散步聊两小时", type: "S" },
+      { text: "看心情，有人约就出门，没人约也开心", type: "F" }
+    ]
+  },
+  {
+    tag: "分享欲",
+    title: "遇到一件特别好笑的小事，你会？",
+    options: [
+      { text: "立刻截图发给三五个朋友", type: "E" },
+      { text: "先存起来，等见面时再讲", type: "S" },
+      { text: "发朋友圈，让所有人一起笑", type: "E" },
+      { text: "自己乐一会儿就过去了", type: "I" }
+    ]
+  },
+  {
+    tag: "边界感",
+    title: "朋友连续三天没回你消息，你会？",
+    options: [
+      { text: "完全理解，TA 可能在忙", type: "F" },
+      { text: "有点在意，但不会说什么", type: "S" },
+      { text: "直接问一句：你还好吗？", type: "E" },
+      { text: "那我也先不找 TA 了", type: "I" }
+    ]
+  },
+  {
+    tag: "相处节奏",
+    title: "你理想中和好朋友的联系频率是？",
+    options: [
+      { text: "每天都想聊几句", type: "E" },
+      { text: "一周一两次，深聊", type: "S" },
+      { text: "想起来就聊，断联三个月也不尴尬", type: "I" },
+      { text: "看对方节奏，配合就好", type: "F" }
+    ]
+  },
+  {
+    tag: "情绪价值",
+    title: "你难过的时候，最希望朋友？",
+    options: [
+      { text: "安静陪着，不用说太多", type: "S" },
+      { text: "帮我分析问题、给建议", type: "R" },
+      { text: "带我出去吃好吃的转移注意力", type: "E" },
+      { text: "先让我自己待一会儿", type: "I" }
+    ]
+  },
+  {
+    tag: "冲突处理",
+    title: "和朋友闹别扭了，你通常？",
+    options: [
+      { text: "主动开口，把话说清楚", type: "E" },
+      { text: "冷静两天，等情绪过去", type: "I" },
+      { text: "发个表情包试探一下", type: "F" },
+      { text: "装作没事，慢慢就翻篇了", type: "S" }
+    ]
+  },
+  {
+    tag: "旅行习惯",
+    title: "一起出去玩，你更想当？",
+    options: [
+      { text: "做攻略的那个人", type: "R" },
+      { text: "跟着走、不操心的那个人", type: "F" },
+      { text: "负责拍照和记录的那个人", type: "S" },
+      { text: "随时提议改行程的那个人", type: "E" }
+    ]
+  },
+  {
+    tag: "热闹耐受度",
+    title: "一屋子十几个人的聚会，你会？",
+    options: [
+      { text: "如鱼得水，挨个聊", type: "E" },
+      { text: "找一两个人聊到深处", type: "S" },
+      { text: "待一小时就想撤", type: "I" },
+      { text: "看有没有熟人，有就还好", type: "F" }
+    ]
+  },
+  {
+    tag: "生活习惯",
+    title: "你的作息更像？",
+    options: [
+      { text: "早睡早起，作息规律", type: "R" },
+      { text: "夜猫子，越晚越清醒", type: "I" },
+      { text: "看当天状态，全凭感觉", type: "F" },
+      { text: "想规律但总做不到", type: "S" }
+    ]
+  },
+  {
+    tag: "美食偏好",
+    title: "和朋友吃饭，你最在意？",
+    options: [
+      { text: "味道必须好吃", type: "R" },
+      { text: "环境氛围要舒服", type: "S" },
+      { text: "人多热闹才香", type: "E" },
+      { text: "不用排队的就行", type: "F" }
+    ]
+  },
+  {
+    tag: "内耗指数",
+    title: "说错一句话之后，你会反复回想吗？",
+    options: [
+      { text: "会，能想一晚上", type: "S" },
+      { text: "偶尔想一下，很快就忘", type: "F" },
+      { text: "基本不会，说都说了", type: "E" },
+      { text: "会，而且会去道歉", type: "I" }
+    ]
+  },
+  {
+    tag: "独处需求",
+    title: "你需要多少独处时间？",
+    options: [
+      { text: "每天必须有，不然会烦躁", type: "I" },
+      { text: "每周有一两天就够", type: "S" },
+      { text: "不太需要，和人待着更开心", type: "E" },
+      { text: "看心情，随时切换", type: "F" }
+    ]
+  },
+  {
+    tag: "表达方式",
+    title: "你更习惯用哪种方式表达关心？",
+    options: [
+      { text: "直接说出口：我想你了", type: "E" },
+      { text: "默默记住 TA 说过的小事", type: "S" },
+      { text: "帮 TA 把事办了", type: "R" },
+      { text: "发个搞笑视频，让 TA 开心", type: "F" }
+    ]
+  },
+  {
+    tag: "对迟到",
+    title: "朋友迟到 20 分钟，你会？",
+    options: [
+      { text: "无所谓，我刚好刷会儿手机", type: "F" },
+      { text: "有点不爽，但不会说", type: "S" },
+      { text: "直接吐槽：你是不是又睡过头了", type: "E" },
+      { text: "下次我会故意晚到", type: "I" }
+    ]
+  },
+  {
+    tag: "长期关系",
+    title: "你觉得友情里最不能缺的是？",
+    options: [
+      { text: "真诚，不装", type: "S" },
+      { text: "陪伴，随时都在", type: "E" },
+      { text: "分寸感，不越界", type: "I" },
+      { text: "合拍，笑点一致", type: "F" }
+    ]
+  }
+];
+
+const RESULTS = [
+  {
+    id: "R1",
+    name: "许飞",
+    role: "节目里的「外冷内热文艺派」",
+    match: "适配度 95% · 不用多说的默契",
+    why: "你也不太爱把情绪挂在脸上，而许飞刚好懂这种“不说但都在心里”的相处方式。你们可以很久不联系，一见面还是能聊到心里去。",
+    charm: "TA 最戳你的地方是真诚。不敷衍、不客套，你低落的时候 TA 不会讲大道理，只会安安静静陪着你，或者递来一首歌。",
+    keywords: ["真诚", "文艺", "不敷衍"],
+    tips: "TA 习惯把心事收着，别默认 TA 永远没事。偶尔主动问一句“你最近还好吗”，会让 TA 觉得被看见。"
+  },
+  {
+    id: "R2",
+    name: "厉娜",
+    role: "节目里的「直球护短派」",
+    match: "适配度 93% · 嘴上酷酷的，行动很暖",
+    why: "你欣赏那种不绕弯子的人，厉娜就是。TA 说话直、态度酷，但真遇到事，第一个站出来护着你的也是 TA。",
+    charm: "TA 从不当面说肉麻的话，却会默默把你的事当成自己的事。你被欺负时 TA 那句“有我在”，比什么都管用。",
+    keywords: ["护短", "直率", "重情义"],
+    tips: "TA 嘴硬心软，别被表面的酷劝退。你软一点、真诚一点，TA 反而会对你更柔软。"
+  },
+  {
+    id: "R3",
+    name: "张萌",
+    role: "节目里的「热情大姐姐」",
+    match: "适配度 92% · 被照顾得明明白白",
+    why: "你有时候容易想太多、放不开，而张萌是那种一进门就能把气氛热起来的人。跟着 TA，你会不知不觉松弛下来。",
+    charm: "TA 特别会照顾人，记得你的口味、看出你的不自在，还会不动声色帮你解围。热情但不压迫，很难得。",
+    keywords: ["热情", "会照顾人", "直爽"],
+    tips: "TA 习惯当照顾别人的那个，但也会累。偶尔反过来关心 TA 一次，TA 会特别感动。"
+  },
+  {
+    id: "R4",
+    name: "马天宇",
+    role: "节目里的「温柔细腻派」",
+    match: "适配度 96% · 被温柔接住",
+    why: "你敏感、细腻，很多小情绪不好意思说，而马天宇刚好是那种能察觉到的人。和 TA 相处，你不用解释太多。",
+    charm: "TA 的温柔不是客套，是刻在细节里的。你随口说的一句话 TA 会记住，你情绪不对 TA 会轻声问一句“还好吗”。",
+    keywords: ["温柔", "细腻", "被记得"],
+    tips: "TA 也会内耗，只是不说。别让 TA 一直当倾听者，偶尔也接住 TA 的情绪。"
+  },
+  {
+    id: "R5",
+    name: "王子旋",
+    role: "节目里的「元气直球派」",
+    match: "适配度 89% · 快乐会传染",
+    why: "你偏安静，TA 偏活泼，本来节奏不同，但 TA 的直球和元气刚好能把你从低气压里拉出来。",
+    charm: "TA 喜欢什么就说什么，不藏着掖着。和 TA 在一起，你会发现自己笑的次数变多了，很多纠结也变得没那么重要。",
+    keywords: ["元气", "直球", "快乐搭子"],
+    tips: "TA 热情来得快，你偶尔会跟不上。累了就直说，TA 不会生气，只会换个方式陪你。"
+  },
+  {
+    id: "R6",
+    name: "文吉儿",
+    role: "节目里的「安静有想法派」",
+    match: "适配度 91% · 聊得到一起",
+    why: "你们都偏安静，但安静不等于没话说。文吉儿是那种有自己小世界的人，和 TA 聊天，总能聊到一些别人接不住的点。",
+    charm: "TA 不急着表达，却很会听。你说那些细碎的感受，TA 不会觉得矫情，反而能接住，还能给出很温柔的看法。",
+    keywords: ["有想法", "会倾听", "同频"],
+    tips: "TA 慢热，别急着拉近距离。给 TA 一点时间，关系会越处越舒服。"
+  },
+  {
+    id: "R7",
+    name: "青稚",
+    role: "节目里的「慢热治愈派」",
+    match: "适配度 94% · 和 TA 待着很安心",
+    why: "你不太喜欢热闹，也不爱刻意社交，而青稚刚好也是那种安安静静的人。你们待在一起，不说话也不尴尬。",
+    charm: "TA 身上有一种让人放松的气质。你不需要在 TA 面前表演开朗，也不用解释自己为什么想一个人待着。",
+    keywords: ["治愈", "慢热", "不尴尬"],
+    tips: "TA 不太主动，容易让人觉得有距离。你偶尔往前迈一小步，TA 会记在心里。"
+  },
+  {
+    id: "R8",
+    name: "白小纯",
+    role: "节目里的「快乐小狗派」",
+    match: "适配度 88% · 被单纯治愈",
+    why: "你容易把事想复杂，而白小纯是那种简单直接、快乐来得也简单的人。和 TA 相处，你会被带着回到很轻松的状态。",
+    charm: "TA 的开心很真，喜欢你就直说，不玩心眼。你 emo 的时候，TA 一个搞笑视频或者一句傻话就能把你逗笑。",
+    keywords: ["单纯", "搞笑", "快乐小狗"],
+    tips: "TA 心思简单，别用太复杂的弯弯绕去猜 TA。有话直说，反而最合 TA 的节奏。"
+  }
+];
+
+const TYPE_TO_RESULT = {
+  E: { R3: 2, R5: 2, R8: 2, R2: 3 },
+  I: { R1: 4, R4: 3, R6: 0.8, R7: 2 },
+  S: { R1: 3, R4: 4, R6: 1, R7: 1 },
+  F: { R3: 1, R5: 2, R8: 2, R2: 2 },
+  R: { R2: 3, R3: 2, R4: 3 }
+};
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+
+const $ = id => document.getElementById(id);
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startQuiz(){
+  current = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[current];
+
+  $('q-index').textContent = current + 1;
+  $('q-tag').textContent = 'Q' + (current + 1) + ' · ' + q.tag;
+  $('q-title-text').textContent = q.title;
+
+  $('progress-bar').style.width = ((current) / QUESTIONS.length * 100) + '%';
+
+  const box = $('options');
+  box.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="dot"></span><span>' + opt.text + '</span>';
+    if (answers[current] === i) btn.classList.add('selected');
+    btn.onclick = () => selectOption(i);
+    box.appendChild(btn);
+  });
+
+  updateNextBtn();
+  $('back-btn').style.visibility = current === 0 ? 'hidden' : 'visible';
+}
+
+function selectOption(i){
+  answers[current] = i;
+  const opts = $('options').children;
+  for (let k = 0; k < opts.length; k++){
+    opts[k].classList.toggle('selected', k === i);
+  }
+  updateNextBtn();
+
+  setTimeout(() => {
+    if (answers[current] === i) nextQuestion();
+  }, 260);
+}
+
+function updateNextBtn(){
+  const btn = $('next-btn');
+  const ok = answers[current] !== null;
+  btn.disabled = !ok;
+  btn.style.opacity = ok ? '1' : '.4';
+  btn.textContent = (current === QUESTIONS.length - 1) ? '查看结果' : '下一题';
+}
+
+function nextQuestion(){
+  if (answers[current] === null) return;
+  if (current < QUESTIONS.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    computeResult();
+  }
+}
+
+function prevQuestion(){
+  if (current > 0){
+    current--;
+    renderQuestion();
+  }
+}
+
+function computeResult(){
+  const typeScore = { E:0, I:0, S:0, F:0, R:0 };
+  answers.forEach((ansIdx, qi) => {
+    const type = QUESTIONS[qi].options[ansIdx].type;
+    if (typeScore[type] !== undefined) typeScore[type]++;
+  });
+
+  const score = {};
+  RESULTS.forEach(r => score[r.id] = 0);
+
+  Object.keys(typeScore).forEach(type => {
+    const weight = TYPE_TO_RESULT[type];
+    Object.keys(weight).forEach(rid => {
+      score[rid] += typeScore[type] * weight[rid];
+    });
+  });
+
+  const seed = answers.reduce((a, b, i) => a + (b + 1) * (i + 3), 0);
+  RESULTS.forEach((r, idx) => {
+    score[r.id] += ((seed * (idx + 7)) % 11) / 10;
+  });
+
+  let best = RESULTS[0].id;
+  let bestScore = -1;
+  Object.keys(score).forEach(rid => {
+    if (score[rid] > bestScore){
+      bestScore = score[rid];
+      best = rid;
+    }
+  });
+
+  const result = RESULTS.find(r => r.id === best);
+  renderResult(result);
+  showScreen('screen-result');
+}
+
+function renderResult(r){
+  $('r-name').textContent = r.name;
+  $('r-role').textContent = r.role;
+  $('r-match').textContent = r.match;
+  $('r-why').textContent = r.why;
+  $('r-charm').textContent = r.charm;
+  $('r-tips').textContent = r.tips;
+
+  const kw = $('r-keywords');
+  kw.innerHTML = '';
+  r.keywords.forEach(k => {
+    const span = document.createElement('span');
+    span.className = 'keyword';
+    span.textContent = k;
+    kw.appendChild(span);
+  });
+}
+
+function restart(){
+  current = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  showScreen('screen-cover');
+}
+
+function shareTip(){
+  alert('小提示：直接截屏保存结果页，就能分享到小红书啦～');
+}
+</script>
+</body>
+</html>
